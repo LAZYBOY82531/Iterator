@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Iterator
 {
-    internal class MyList<T>
+    internal class MyList<T> : IEnumerable<T>
     {
         private const int DCapacity = 8;           //기본 list의 최대크기
         private T[] items;                               //리스트
@@ -33,9 +34,12 @@ namespace Iterator
                 items[index] = value;                //리스트에 저장할 값
             }
         }
-        public int Count()                           //리스트에 원소가 들어가 있는 갯수를 반환하는 함수
+        public int Count                           //리스트에 원소가 들어가 있는 갯수를 반환하는 함수
         {
-            return size + 1;
+            get
+            {
+                return size;
+            }
         }
         public int Capacity()                      //리스트의 실질적 값을 반환하는 함수
         {
@@ -136,6 +140,64 @@ namespace Iterator
             T[] newItems = new T[newCapacity];
             Array.Copy(items, 0, newItems, 0, size);
             items = newItems;
+        }
+
+        public IEnumerator<T> GetEnumerator()
+        {
+            return new MyEnumerator(this);
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return new MyEnumerator(this);
+        }
+        public struct MyEnumerator : IEnumerator<T>
+        {
+            private MyList<T> list;
+            private int index;
+            private T current;
+
+            internal MyEnumerator(MyList<T> list)
+            {
+                this.list = list;
+                this.index = 0;
+                this.current = default(T);
+            }
+
+            public T Current { get { return current; } }
+
+            object IEnumerator.Current
+            {
+                get
+                {
+                    if (index < 0 || index >= list.Count)
+                        throw new InvalidOperationException();
+                    return Current;
+                }
+            }
+
+            public void Dispose() { }
+
+            public bool MoveNext()
+            {
+                if (index < list.Count)
+                {
+                    current = list[index++];
+                    return true;
+                }
+                else
+                {
+                    current = default(T);
+                    index = list.Count;
+                    return false;
+                }
+            }
+
+            public void Reset()
+            {
+                index = 0;
+                current = default(T);
+            }
         }
     }
 }

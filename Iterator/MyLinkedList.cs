@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -45,7 +46,7 @@ namespace Iterator
 		public MyLinkedListNode<T> Next { get { return next; } }   //연결리스트에서 뒤의 값을 불러오는 함수 정의
 		public T Value { get { return data; } set { data = value; } }    //연결리스트에서 값을 저장하거나 불러오는 함수를 정의
 	}
-	public class MyLinkedList<T>                                                  //연결리스트 정의
+	public class MyLinkedList<T> : IEnumerable<T>                     //연결리스트 정의
 	{
 		private MyLinkedListNode<T> head;                                  //함수에서만 사용되는 해드와 테일 정의
 		private MyLinkedListNode<T> tail;
@@ -170,6 +171,57 @@ namespace Iterator
 			else                                                                 //연결리스트에 value값이 없다면
 			{
 				return false;                                                //false값을 반환
+			}
+		}
+
+		public IEnumerator<T> GetEnumerator()
+		{
+			return new MyEnumerator(this);
+		}
+
+		IEnumerator IEnumerable.GetEnumerator()
+		{
+			return new MyEnumerator(this);
+		}
+
+		public struct MyEnumerator : IEnumerator<T>
+		{
+			private MyLinkedList<T> list;
+			private MyLinkedListNode<T> node;
+			private T current;
+
+			internal MyEnumerator(MyLinkedList<T> list)
+			{
+				this.list = list;
+				this.node = list.head;
+				this.current = default(T);
+			}
+
+			public T Current { get { return current; } }
+
+			object IEnumerator.Current { get { return current; } }
+
+			public void Dispose() { }
+
+			public bool MoveNext()
+			{
+				if (node != null)
+				{
+					current = node.data;
+					node = node.next;
+					return true;
+				}
+				else
+				{
+					current = default(T);
+					return false;
+				}
+			}
+
+			public void Reset()
+			{
+				this.node = list.head;
+				current = default(T);
 			}
 		}
 	}

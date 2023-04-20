@@ -72,7 +72,7 @@ namespace _03._Iterator
 			while (listIter.MoveNext())
 			{
 				Console.WriteLine(listIter.Current);
-			}*/
+			}
 
 
             Iterator.LinkedList<int> linkedList = new Iterator.LinkedList<int>();
@@ -80,11 +80,17 @@ namespace _03._Iterator
 
             foreach (int i in linkedList) Console.WriteLine(i);
 
-            /*IEnumerator<int> linkedListIter = linkedList.GetEnumerator();
+            IEnumerator<int> linkedListIter = linkedList.GetEnumerator();
             while (linkedListIter.MoveNext())
             {
                 Console.WriteLine(linkedListIter.Current);
             }*/
-        }
+			Iterator.MyList<int> list = new Iterator.MyList<int>();
+			for (int i = 1; i <= 4; i++) list.Add(i);
+			foreach (int i in list) Console.WriteLine(i);
+			Iterator.MyLinkedList<int> list2 = new Iterator.MyLinkedList<int>();
+			for (int i = 1; i <= 5; i++) list2.AddLast(i);
+			foreach (int i in list2) Console.WriteLine(i);
+		}
 	}
 }
